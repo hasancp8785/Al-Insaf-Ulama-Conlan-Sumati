@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Al-Insaf Ulama Conlan Sumati</title>
+<style>
+body {margin:0;font-family:Arial;background:linear-gradient(135deg,#0b3c5d,#1fa15c);color:white;text-align:center;}
+.container {padding:20px;}
+.logo {width:120px;margin:20px auto;}
+h1 {margin-bottom:30px;}
+.user-card {background:rgba(255,255,255,0.15);border-radius:15px;padding:15px;margin:10px;display:inline-block;width:250px;cursor:pointer;transition:0.2s;position:relative;}
+.user-card:hover {transform:scale(1.05);background:rgba(255,255,255,0.25);}
+.summary {margin-top:30px;padding:20px;background:rgba(0,0,0,0.35);border-radius:15px;}
+.history-box {margin-top:10px;padding:10px;background:rgba(0,0,0,0.5);border-radius:10px;display:none;text-align:left;}
+select,button {padding:5px;border-radius:5px;margin:5px;}
+@media(max-width:768px){.user-card{width:80%;}}
+</style>
+</head>
+<body>
+<div class="container">
+<img src="https://drive.google.com/uc?export=view&id=10t4Qq0zbBSofSXjF9cwJmESgWcpgiyBP" class="logo">
+<h1>Al-Insaf Ulama Conlan Sumati</h1><label>Filter Month: </label> <select id="monthFilter" onchange="renderUsers()">
+
+  <option value="all">All</option>
+  <option value="01">January</option>
+  <option value="02">February</option>
+  <option value="03">March</option>
+  <option value="04">April</option>
+  <option value="05">May</option>
+  <option value="06">June</option>
+  <option value="07">July</option>
+  <option value="08">August</option>
+  <option value="09">September</option>
+  <option value="10">October</option>
+  <option value="11">November</option>
+  <option value="12">December</option>
+</select><label>Filter Year: </label> <select id="yearFilter" onchange="renderUsers()">
+
+  <option value="all">All</option>
+  <option value="2026">2026</option>
+  <option value="2027">2027</option>
+    <option value="2028">2028</option>
+	  <option value="2029">2029</option>
+	    <option value="2030">2030</option>
+</select><button onclick="downloadPDF()">Download PDF</button>
+
+<div id="users"></div><div class="summary">
+<h2>Sumati Summary</h2>
+<p>Total Balance: <span id="totalBalance">0</span></p>
+<p>Total Expense: <span id="totalExpense">0</span></p>
+<p>Total Profit: <span id="totalProfit">0</span></p>
+</div>
+</div><script>
+const users = [
+    { name: "Mufti Ruhul Amin", previous: 400, newBalance: 200, 
+	history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+	
+    { name: "Mufti Nur Alom", previous: 400, newBalance: 200,
+	history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+	
+    { name: "Hasan Ali", previous: 400, newBalance: 200,
+	history:["01/01/2026 - 200TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+	
+	 { name: "Hafez Ferdous", previous: 400, newBalance: 200,
+	 history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+	 
+	  { name: "Hafez muktar ", previous: 400, newBalance: 200,
+	  history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+	  
+	   { name: "Maulana Al Mamun ",previous: 400, newBalance: 200, 
+	   history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+	   
+	    { name: "Hafez Ariful Islam",previous: 400, newBalance: 200,
+		history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+		
+		 { name: "Sumon Hasan", previous: 400, newBalance: 200,
+		 history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+		 
+		  { name: "Md Yasin",previous: 400, newBalance: 200,
+		  history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+		  
+		   { name: "Shoaib Hossain", previous: 400, newBalance: 200,
+		   history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+		   
+		     { name: "Md Siyam ", previous: 400, newBalance: 200, 
+			 history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+			 
+			   { name: "Saim Sheikh", previous: 400, newBalance: 200,
+			   history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+];
+
+const usersContainer = document.getElementById('users');
+
+function showHistory(user, historyDiv){
+    const month = document.getElementById('monthFilter').value;
+    const year = document.getElementById('yearFilter').value;
+
+    const filteredHistory = user.history.filter(item => {
+        const [date] = item.split(' ');
+        const [d, m, y] = date.split('/');
+        const monthMatch = (month === 'all' || m === month);
+        const yearMatch = (year === 'all' || y === year);
+        return monthMatch && yearMatch;
+    });
+
+    historyDiv.innerHTML = filteredHistory.length ? '<ul>' + filteredHistory.map(d => `<li>${d}</li>`).join('') + '</ul>' : '<p>No records</p>';
+    historyDiv.style.display = 'block';
+}
+
+function renderUsers(){
+    usersContainer.innerHTML = '';
+    let totalBalanceAll = 0;
+
+    users.forEach(user => {
+        const total = user.previous + user.newBalance;
+        totalBalanceAll += total;
+
+        const userCard = document.createElement('div');
+        userCard.className = 'user-card';
+        userCard.innerHTML = `
+            <h3>${user.name}</h3>
+            <p>Previous Balance: ${user.previous}</p>
+            <p>New Balance: ${user.newBalance}</p>
+            <p><strong>Total Balance: ${total}</strong></p>
+        `;
+
+        const historyDiv = document.createElement('div');
+        historyDiv.className = 'history-box';
+
+        userCard.appendChild(historyDiv);
+        userCard.onclick = () => showHistory(user, historyDiv);
+
+        usersContainer.appendChild(userCard);
+    });
+
+    document.getElementById('totalBalance').innerText = totalBalanceAll;
+    document.getElementById('totalExpense').innerText = 00;
+    document.getElementById('totalProfit').innerText = 00;
+}
+
+function downloadPDF(){
+    window.print();
+}
+
+renderUsers();
+</script></body>
+</html>

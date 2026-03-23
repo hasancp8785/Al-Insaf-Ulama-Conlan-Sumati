@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@ body {margin:0;font-family:Arial;background:linear-gradient(135deg,#0b3c5d,#1fa1
 .container {padding:20px;}
 .logo {width:120px;margin:20px auto;}
 h1 {margin-bottom:30px;}
-.user-card {background:rgba(255,255,255,0.15);border-radius:15px;padding:15px;margin:10px;display:inline-block;width:250px;cursor:pointer;transition:0.2s;position:relative;}
+.user-card {background:rgba(255,255,255,0.15);border-radius:15px;padding:15px;margin:10px;display:inline-block;width:250px;cursor:pointer;transition:0.2s;}
 .user-card:hover {transform:scale(1.05);background:rgba(255,255,255,0.25);}
 .summary {margin-top:30px;padding:20px;background:rgba(0,0,0,0.35);border-radius:15px;}
 .history-box {margin-top:10px;padding:10px;background:rgba(0,0,0,0.5);border-radius:10px;display:none;text-align:left;}
@@ -17,131 +18,230 @@ select,button {padding:5px;border-radius:5px;margin:5px;}
 </style>
 </head>
 <body>
+
 <div class="container">
 <img src="alinsaf.jpeg" class="logo">
-<h1>Al-Insaf Ulama Conlan Sumati</h1><label>Filter Month: </label> <select id="monthFilter" onchange="renderUsers()">
+<h1>Al-Insaf Ulama Conlan Sumati</h1>
 
-  <option value="all">All</option>
-  <option value="01">January</option>
-  <option value="02">February</option>
-  <option value="03">March</option>
-  <option value="04">April</option>
-  <option value="05">May</option>
-  <option value="06">June</option>
-  <option value="07">July</option>
-  <option value="08">August</option>
-  <option value="09">September</option>
-  <option value="10">October</option>
-  <option value="11">November</option>
-  <option value="12">December</option>
-</select><label>Filter Year: </label> <select id="yearFilter" onchange="renderUsers()">
+<!-- FILTERS -->
+<label>Filter Month: </label>
+<select id="monthFilter" onchange="renderUsers()">
+<option value="all">All</option>
+<option value="01">January</option>
+<option value="02">February</option>
+<option value="03">March</option>
+<option value="04">April</option>
+<option value="05">May</option>
+<option value="06">June</option>
+<option value="07">July</option>
+<option value="08">August</option>
+<option value="09">September</option>
+<option value="10">October</option>
+<option value="11">November</option>
+<option value="12">December</option>
+</select>
 
-  <option value="all">All</option>
-  <option value="2026">2026</option>
-  <option value="2027">2027</option>
-    <option value="2028">2028</option>
-	  <option value="2029">2029</option>
-	    <option value="2030">2030</option>
-</select><button onclick="downloadPDF()">Download PDF</button>
+<label>Filter Year: </label>
+<select id="yearFilter" onchange="renderUsers()">
+<option value="all">All</option>
+<option value="2026">2026</option>
+<option value="2027">2027</option>
+<option value="2028">2028</option>
+<option value="2029">2029</option>
+<option value="2030">2030</option>
+</select>
 
-<div id="users"></div><div class="summary">
+<button onclick="downloadPDF()">Download PDF</button>
+
+<div id="users"></div>
+
+<div class="summary">
 <h2>Sumati Summary</h2>
+<p>Total Extra Fund: <span id="totalExtra">0</span></p>
 <p>Total Balance: <span id="totalBalance">0</span></p>
-<p>Total Expense: <span id="totalExpense">0</span></p>
 <p>Total Profit: <span id="totalProfit">0</span></p>
+<p>Total Expense: <span id="totalExpense">0</span></p>
 </div>
-</div><script>
+</div>
+
+<script>
+// USERS DATA
 const users = [
-    { name: "Mufti Ruhul Amin", previous: 400, newBalance: 200, 
-	history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-	
-    { name: "Mufti Nur Alom", previous: 400, newBalance: 200,
-	history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-	
-    { name: "Hasan Ali", previous: 400, newBalance: 200,
-	history:["01/01/2026 - 200TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-	
-	 { name: "Hafez Ferdous", previous: 400, newBalance: 200,
-	 history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-	 
-	  { name: "Hafez muktar ", previous: 400, newBalance: 200,
-	  history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-	  
-	   { name: "Maulana Al Mamun ",previous: 400, newBalance: 200, 
-	   history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-	   
-	    { name: "Hafez Ariful Islam",previous: 400, newBalance: 200,
-		history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-		
-		 { name: "Sumon Hasan", previous: 400, newBalance: 200,
-		 history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-		 
-		  { name: "Md Yasin",previous: 400, newBalance: 200,
-		  history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-		  
-		   { name: "Shoaib Hossain", previous: 400, newBalance: 200,
-		   history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-		   
-		     { name: "Md Siyam ", previous: 400, newBalance: 200, 
-			 history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
-			 
-			   { name: "Saim Sheikh", previous: 400, newBalance: 200,
-			   history:["01/01/2026 - 200 TK","01/02/2026 - 200 TK","01/03/2026 - 200 TK"] },
+  {
+    name:"Mufti Ruhul Amin",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK",
+    ]
+  },
+  {
+    name:"Mufti Nur Alom",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  },
+  {
+    name:"Hasan Ali",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK",
+	  "20/02/2026 - Extra Fund: 100 TK"
+    ]
+  },
+  {
+    name:"Hafez Ferdous",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  },
+  {
+    name:"Hafez muktar",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  },
+  {
+    name:"Maulana Al Mamun",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  },
+  {
+    name:"Hafez Ariful Islam",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  },
+  {
+    name:"Sumon Hasan",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  },
+  {
+    name:"Md Yasin",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  },
+  {
+    name:"Shoaib Hossain",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  },
+  {
+    name:"Md Siyam ",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  },
+ {
+    name:"Saim Sheikh",
+    history:[
+      "01/01/2026 - 200 TK",
+      "01/02/2026 - 200 TK",
+      "01/03/2026 - 200 TK"
+    ]
+  }
 ];
 
-const usersContainer = document.getElementById('users');
-
+// SHOW HISTORY
 function showHistory(user, historyDiv){
-    const month = document.getElementById('monthFilter').value;
-    const year = document.getElementById('yearFilter').value;
+  const month = document.getElementById('monthFilter').value;
+  const year = document.getElementById('yearFilter').value;
 
-    const filteredHistory = user.history.filter(item => {
-        const [date] = item.split(' ');
-        const [d, m, y] = date.split('/');
-        const monthMatch = (month === 'all' || m === month);
-        const yearMatch = (year === 'all' || y === year);
-        return monthMatch && yearMatch;
-    });
+  const filtered = user.history.filter(item=>{
+    const [date] = item.split(' ');
+    const [d,m,y] = date.split('/');
+    return (month==='all'||m===month)&&(year==='all'||y===year);
+  });
 
-    historyDiv.innerHTML = filteredHistory.length ? '<ul>' + filteredHistory.map(d => `<li>${d}</li>`).join('') + '</ul>' : '<p>No records</p>';
-    historyDiv.style.display = 'block';
+  historyDiv.innerHTML = filtered.length
+    ? '<ul>'+filtered.map(d=>`<li>${d}</li>`).join('')+'</ul>'
+    : '<p>No records</p>';
+
+  historyDiv.style.display='block';
 }
 
+// RENDER USERS
 function renderUsers(){
-    usersContainer.innerHTML = '';
-    let totalBalanceAll = 0;
+  const usersContainer = document.getElementById('users');
+  usersContainer.innerHTML='';
 
-    users.forEach(user => {
-        const total = user.previous + user.newBalance;
-        totalBalanceAll += total;
+  let totalBalanceAll = 0;
+  let totalExtraAll = 0;
 
-        const userCard = document.createElement('div');
-        userCard.className = 'user-card';
-        userCard.innerHTML = `
-            <h3>${user.name}</h3>
-            <p>Previous Balance: ${user.previous}</p>
-            <p>New Balance: ${user.newBalance}</p>
-            <p><strong>Total Balance: ${total}</strong></p>
-        `;
+  users.forEach(user=>{
+    let previous = 0;
+    let extra = 0;
 
-        const historyDiv = document.createElement('div');
-        historyDiv.className = 'history-box';
-
-        userCard.appendChild(historyDiv);
-        userCard.onclick = () => showHistory(user, historyDiv);
-
-        usersContainer.appendChild(userCard);
+    user.history.forEach(item=>{
+      if(item.includes("Extra Fund")){
+        const amount = parseInt(item.split(':')[1]);
+        extra += amount;
+        previous += amount; // include in total
+      } else {
+        const amount = parseInt(item.split('-')[1]);
+        previous += amount;
+      }
     });
 
-    document.getElementById('totalBalance').innerText = totalBalanceAll;
-    document.getElementById('totalExpense').innerText = 00;
-    document.getElementById('totalProfit').innerText = 00;
+    const total = previous;
+
+    totalBalanceAll += total;
+    totalExtraAll += extra;
+
+    const card = document.createElement('div');
+    card.className='user-card';
+    card.innerHTML = `
+      <h3>${user.name}</h3>
+      <p>Previous Balance: ${previous - extra}</p>
+      <p>Extra Fund: ${extra}</p>
+      <p>Total Extra Fund: ${extra}</p>
+      <p><strong>Total Balance: ${total}</strong></p>
+    `;
+
+    const historyDiv = document.createElement('div');
+    historyDiv.className='history-box';
+    card.appendChild(historyDiv);
+    card.onclick = ()=>showHistory(user,historyDiv);
+
+    usersContainer.appendChild(card);
+  });
+
+  document.getElementById('totalBalance').innerText = totalBalanceAll;
+  document.getElementById('totalExtra').innerText = totalExtraAll;
+  document.getElementById('totalExpense').innerText = 0;
+  document.getElementById('totalProfit').innerText = 0;
 }
 
-function downloadPDF(){
-    window.print();
-}
+// PDF
+function downloadPDF(){ window.print(); }
 
+// START
 renderUsers();
-</script></body>
-</html>
+</script>
+
+</body>
+</html>!
